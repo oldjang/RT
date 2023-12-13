@@ -26,7 +26,7 @@ double GenUniformRandom(double rangeStart, double rangeEnd) {
 	}
 	double r;
 	r = rangeStart
-			+ ((rangeEnd - rangeStart) * (double) random() / (double) RAND_MAX);
+			+ ((rangeEnd - rangeStart) * (double) rand() / (double) RAND_MAX);
 	if (r < rangeStart || r > rangeEnd) {
 		ShowError(
 				"Error in genUniformRandom: the number generated is not in the given range!\n");

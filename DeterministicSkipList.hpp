@@ -299,7 +299,7 @@ public:
         rangeList.clear();
         buildThroughIntervals(querys);
     }
-    void buildThroughIntervals(std::vector<std::pair<std::pair<double,double>, std::pair<int,int> > > querys){
+    void buildThroughIntervals(const std::vector<std::pair<std::pair<double,double>, std::pair<int,int> > > &querys){
         std::vector<std::pair<double,int> >keyList;
         for(int i = 0; i < querys.size(); i++){
             keyList.push_back({querys[i].first.first,i*2});
@@ -341,6 +341,10 @@ public:
         head = new SkipListNode(-2e9, level);
         tail = new SkipListNode(2e9, level);
         for(int i = 0; i <= level; i++) head->forward[i] = tail;
+    }
+
+    DeterministicSkipList(const std::vector<std::pair<std::pair<double,double>, std::pair<int,int> > > &querys){
+        buildThroughIntervals(querys);
     }
 };
 

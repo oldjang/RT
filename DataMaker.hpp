@@ -15,7 +15,7 @@ namespace DataMaker{
         bool isCovered(double l, double r){
             return L <= l && r <= R;
         }
-        Query(double l, double r, int t;){
+        Query(double l, double r, int t){
             L = l;
             R = r;
             th = t;

@@ -591,11 +591,11 @@ void LogarithmicFramework<T>::GlobalRebuilding() {
 	MyVector<T> globalList;
 	globalList.reserve(aliveNum);
 
-	printf("\nStart global rebuilding:\n");
-	printf(
-			"lastQNum = %d\t insNum = %d\t delNum = %d\t alertNum = %d\t fixNum = %d\n",
-			lastQNum, insNum, delNum, alertNum, fixNum);
-	fflush(stdout);
+//	printf("\nStart global rebuilding:\n");
+//	printf(
+//			"lastQNum = %d\t insNum = %d\t delNum = %d\t alertNum = %d\t fixNum = %d\n",
+//			lastQNum, insNum, delNum, alertNum, fixNum);
+//	fflush(stdout);
 
 	int strNum = this->strList.size();
 
@@ -647,8 +647,8 @@ void LogarithmicFramework<T>::GlobalRebuilding() {
 	if (end - start > MaxRebuildTime) {
 		MaxRebuildTime = end - start;
 	}
-	printf("total global rebuilding time = %lf. aliveNum = %d\n\n", end - start,
-			aliveNum);
+//	printf("total global rebuilding time = %lf. aliveNum = %d\n\n", end - start,
+//			aliveNum);
 
 }
 

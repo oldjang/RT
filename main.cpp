@@ -61,56 +61,82 @@ struct Reverse_Comparison {
  */
 const double PER_M = 1024.0 * 1024;
 
-int main(int nargs, char **args)
-{
+int main() {
     DataMaker::DataMaker dataMaker;
-    int N = 1000;
-    int upper = 10000;
-
-    dataMaker.getRandomIntIntervals(N,upper, 60);
-    auto queryList = dataMaker.intervals;
-    DeterministicSkipList skipList(2);
-    srand(time(0));
-    std::vector<int> v;
-    for(int i = 0; i <queryList.size(); i++) v.push_back(rand()%upper);
-    std::vector<int> ins;
-    for(int i = 0; i <queryList.size(); i++) ins.push_back(rand()%20 + 1);
-
-    std::ofstream fout("test.data");
-
-    for(int i = 0 ;i < N; i++){
-        fout<<queryList[i].L<<' '<<queryList[i].R<<' '<<v[i]<<' '<<ins[i]<<'\n';
+    int N = 10000;
+    int upper = 1000000;
+    int M = 10000;
+    dataMaker.getRandomIntIntervals(N, upper, 20, 1000);
+    std::vector<std::pair<std::pair<double, double>, std::pair<int, int> > > query(N);
+    MyVector<QueryBase>queryList;
+    for (int i = 0; i < N; i++) {
+        query[i] = {{dataMaker.intervals[i].L, dataMaker.intervals[i].R},
+                    {i,                        dataMaker.intervals[i].th}};
+        QueryBase temp;
+        temp.id = i;
+        temp.range = new int[2];
+        temp.range[0] = dataMaker.intervals[i].L;
+        temp.range[1] = dataMaker.intervals[i].R;
+        temp.threshold = dataMaker.intervals[i].th;
     }
+    DeterministicSkipList skipList(query);
+    MyVector<Query> logList;
+    GenQueryListFromRawData(logList, queryList);
 
-    fout.close();
+    double start = getCurrentTime();
+    SegmentTree_Log* strConstructor = new SegmentTree_Log();
+    LogarithmicFramework<Query>* our_log = new LogarithmicFramework<Query>(
+            strConstructor, logList);
 
-    std::ifstream fin("test.data");
+    double end = getCurrentTime();
+    double duration = 0;
+    duration += end - start;
+    double constructionTime = end - start;
 
-    for(int i = 0 ;i < N; i++){
-        fin>>queryList[i].L>>queryList[i].R>>v[i]>>ins[i];
+    printf("Construction done.\n");
+    printf("Construction time = %lf seconds.\n", constructionTime);
+//		printf("IniTime_Ours = %lf\n", IniTime_Ours);
+    fflush(stdout);
+
+    dataMaker.getRandomOp(M,upper,60,1000,100);
+    double s1 = 0,s2 = 0;
+    for(int i = 0; i<M;i++){
+        if(dataMaker.op[i].first == 0){
+            int id = rangeList.size();
+            Range *range = new Range(dataMaker.op[i].second.L, dataMaker.op[i].second.R, i, dataMaker.op[i].second.th, id);
+            rangeList.push_back(range);
+
+            MyVector<int> range2;
+            range2.resize(2,0);
+            range2[0] = dataMaker.op[i].second.L;
+            range2[1] = dataMaker.op[i].second.R;
+            Query q(i,range2, dataMaker.op[i].second.th);
+            double t1 = getCurrentTime();
+            skipList.cover(dataMaker.op[i].second.L, dataMaker.op[i].second.R, id, dataMaker.op[i].second.th);
+
+            double t2 = getCurrentTime();
+            our_log->InsertQuery(q);
+            double t3 = getCurrentTime();
+            s1 +=t2-t1;
+            s2 +=t3-t2;
+        }
+        else{
+            MyVector<int> alertIDList;
+            MyVector<int> ptCoords;
+            ptCoords.resize(DIM, 0);
+            ptCoords[0] = dataMaker.op[i].second.L;
+            double t1 = getCurrentTime();
+            auto x = skipList.increase(dataMaker.op[i].second.L,dataMaker.op[i].second.th);
+            double t2 = getCurrentTime();
+            our_log->InsertPoint(ptCoords.get_list(),dataMaker.op[i].second.th,alertIDList);
+            double t3 = getCurrentTime();
+            s1 +=t2-t1;
+            s2 +=t3-t2;
+//            for(auto a:x) cout<<a<<' ';puts("");
+//            for(int j =0;j<alertIDList.size();j++)cout<<alertIDList[j]<<' ';puts("");
+        }
+        if(i%1000==0)cout<<s1<<' '<<s2<<endl;
     }
-    for(int i = 0 ;i <queryList.size(); i++){
-        int th = 1000;
-        int id = rangeList.size();
-        Range *range = new Range(queryList[i].L, queryList[i].R, i, th, id);
-        rangeList.push_back(range);
-
-        bruteForce.addQuery(queryList[i].L, queryList[i].R, i, th);
-        skipList.cover(queryList[i].L, queryList[i].R, id, th);
-
-//        if(i>=3)printf("%d\n",rangeList[3]->storedIn[0][0].second);
-        auto result1 = skipList.increase(v[i], ins[i]);
-        auto result2 = bruteForce.addPoint(v[i],ins[i]);
-        if(result1.size()!=result2.size()){
-            puts("NO");
-            if(result1.size()>0){for(auto x:result1)printf("%d ",x);puts("r1");}
-            if(result2.size()>0){for(auto x:result2)printf("%d ",x);puts("r2");}
-        }
-        else {
-            for (int j = 0; j < result1.size(); j++) {
-                if (result1[j] != result2[j])puts("No");
-                break;
-            }
-        }
+    cout<<s1<<' '<<s2<<endl;
     return 0;
 }
