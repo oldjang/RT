@@ -74,18 +74,18 @@ namespace DataMaker{
             std::uniform_int_distribution<int> rand(0, upper - range);
             std::uniform_int_distribution<int> randw(1, w);
             for (int i = 0; i < M; i++) {
-                int c = rand(gen)%2;
+                int c = rand(gen)%10;
                 if(c == 0) {
                     double L = rand(gen);
                     while (mp.contains(L)) L = rand(gen);
                     mp[L] = 1;
                     double R = L + range - 1;
-                    op[i] = {c,Query(L, R, t)};
+                    op[i] = {0,Query(L, R, t)};
                 }
                 else{
                     int key = rand(gen);
                     int weight = randw(gen);
-                    op[i] = {c,Query(key,key,weight)};
+                    op[i] = {1,Query(key,key,weight)};
                 }
             }
         }

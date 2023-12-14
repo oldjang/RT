@@ -63,10 +63,10 @@ const double PER_M = 1024.0 * 1024;
 
 int main() {
     DataMaker::DataMaker dataMaker;
-    int N = 10000;
-    int upper = 1000000;
-    int M = 10000;
-    dataMaker.getRandomIntIntervals(N, upper, 20, 1000);
+    int N = 100000;
+    int upper = 10000000;
+    int M = 1000000;
+    dataMaker.getRandomIntIntervals(N, upper, 10, 1000000);
     std::vector<std::pair<std::pair<double, double>, std::pair<int, int> > > query(N);
     MyVector<QueryBase>queryList;
     for (int i = 0; i < N; i++) {
@@ -78,6 +78,7 @@ int main() {
         temp.range[0] = dataMaker.intervals[i].L;
         temp.range[1] = dataMaker.intervals[i].R;
         temp.threshold = dataMaker.intervals[i].th;
+        queryList.push_back(temp);
     }
     DeterministicSkipList skipList(query);
     MyVector<Query> logList;
@@ -95,10 +96,11 @@ int main() {
 
     printf("Construction done.\n");
     printf("Construction time = %lf seconds.\n", constructionTime);
+    cout<<our_log->GetAliveNum()<<endl;
 //		printf("IniTime_Ours = %lf\n", IniTime_Ours);
     fflush(stdout);
 
-    dataMaker.getRandomOp(M,upper,60,1000,100);
+    dataMaker.getRandomOp(M,upper,10,1000000,10);
     double s1 = 0,s2 = 0;
     for(int i = 0; i<M;i++){
         if(dataMaker.op[i].first == 0){
@@ -135,7 +137,10 @@ int main() {
 //            for(auto a:x) cout<<a<<' ';puts("");
 //            for(int j =0;j<alertIDList.size();j++)cout<<alertIDList[j]<<' ';puts("");
         }
-        if(i%1000==0)cout<<s1<<' '<<s2<<endl;
+        if(i%10000==0){
+            cout<<s1<<' '<<s2<<endl;
+            cout<<our_log->GetAliveNum()<<endl;
+        }
     }
     cout<<s1<<' '<<s2<<endl;
     return 0;
