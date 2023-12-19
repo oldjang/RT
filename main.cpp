@@ -32,6 +32,9 @@
 #include "DataMaker.hpp"
 #include "DeterministicSkipList.hpp"
 
+#include "HighDimSkipList.h"
+#include "HighDimSkipListNode.h"
+
 #include <fstream>
 #include <vector>
 #include <map>
@@ -63,6 +66,7 @@ const double PER_M = 1024.0 * 1024;
 
 int main() {
     DataMaker::DataMaker dataMaker;
+
     int N = 100000;
     int upper = 10000000;
     int M = 1000000;
